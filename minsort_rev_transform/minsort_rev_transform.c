@@ -230,16 +230,16 @@ void decode(unsigned char *UST, long len, FILE *outfile)
 				pos = orig_pos + count;
 				last_node_count = count;
 
-				fprintf(stderr, "Node %d has %d suffixes\n", next_node, count);
+				//fprintf(stderr, "Node %d has %d suffixes\n", next_node, count);
 			}
 			else {
 				contexts_lost++;
 			}
 		}
 
-		if(contexts_lost > 0) {
+		//if(contexts_lost > 0) {
 			//fprintf(stderr, "Lost %d nodes. i = %d\n", contexts_lost, (int)i);
-		}
+		//}
 
 		i = node_next_pos[dest_node];
 
