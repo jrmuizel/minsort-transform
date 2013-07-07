@@ -1,0 +1,4 @@
+*.o
+.*.swp
+minsort_rev_transform/minsort_rev_transform
+minsort_transform/minsort_transform
