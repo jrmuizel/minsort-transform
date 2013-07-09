@@ -20,13 +20,13 @@ void decode(unsigned char *UST, long len, FILE *outfile);
 
 void usage(void)
 {
-	fprintf(stderr, "Usage: minsort_rev_transform <infile.ust> <primary_index> <outfile>\n");
+	fprintf(stderr, "Usage: minsort_rev_transform <infile.ust> <primary_index> [<outfile>]\n");
 	exit(1);
 }
 
 int main(int argc, char *argv[])
 {
-	if(argc < 4) {
+	if(argc < 3) {
 		usage();
 	}
 
@@ -35,7 +35,9 @@ int main(int argc, char *argv[])
 	map_in(UST, len, argv[1]);
 
 	FILE *outfile = stdout;
-	outfile = fopen(argv[3], "w");
+	if(argc > 3) {
+		outfile = fopen(argv[3], "w");
+	}
 	primary_index = strtol(argv[2], NULL, 10);
 
 	decode(UST, len, outfile);
@@ -164,8 +166,6 @@ void decode(unsigned char *UST, long len, FILE *outfile)
 
 		putc(c, outfile);
 
-		//fprintf(stderr, "At rank %d, position %d\n", (int)i, (int)p);
-
 		// Try to find a destination node, trying each node and then its parent, all the way up to the root
 		PValue = NULL;
 		for(node=primary_node[i]; node >= 0; node=node_parent[node]) {
@@ -190,16 +190,11 @@ void decode(unsigned char *UST, long len, FILE *outfile)
 		int orig_pos = pos;
 		int last_node_made = 0;
 		int last_node_count = 0;
-		int contexts_lost = 0;
 		for(node=primary_node[i]; node != started_node; node=node_parent[node]) {
 			int count = count_range(UST, node_start_pos[node], node_end_pos[node], c);
 			if((c == last_symbol) && (node_start_pos[node] <= primary_index) && (node_end_pos[node] > primary_index)) {
-				//fprintf(stderr, "Reducing count d/t primary index. next rank = %d, node_start_pos = %d, node_end_pos = %d\n", orig_pos, node_start_pos[node], node_end_pos[node]);
 				count--;
 			}
-			//else if((node_start_pos[node] <= primary_index) && (node_end_pos[node] > primary_index)) {
-				//fprintf(stderr, "Not reducing count. last_symbol = %d, c = %d node_start_pos[node] = %d node_end_pos[node] = %d\n", last_symbol, c, node_start_pos[node], node_end_pos[node]);
-			//}
 
 			if((last_node_made==0 && count > 1) || (last_node_made>0 && count-last_node_count>0)) {
 				int next_node = num_nodes++;
@@ -218,9 +213,6 @@ void decode(unsigned char *UST, long len, FILE *outfile)
 					exit(1);
 				}
 				*PValue = next_node;
-				if(last_node_made==0) {
-					//fprintf(stderr, "Inserted a transition %d => %d\n", node, dest_node);
-				}
 
 				if(last_node_made > 0) {
 					node_parent[last_node_made] = next_node;
@@ -229,17 +221,8 @@ void decode(unsigned char *UST, long len, FILE *outfile)
 
 				pos = orig_pos + count;
 				last_node_count = count;
-
-				//fprintf(stderr, "Node %d has %d suffixes\n", next_node, count);
-			}
-			else {
-				contexts_lost++;
 			}
 		}
-
-		//if(contexts_lost > 0) {
-			//fprintf(stderr, "Lost %d nodes. i = %d\n", contexts_lost, (int)i);
-		//}
 
 		i = node_next_pos[dest_node];
 
@@ -251,10 +234,6 @@ void decode(unsigned char *UST, long len, FILE *outfile)
 		else {
 			node_next_pos[dest_node]++;
 		}
-
-		//if((ticks++ % 10000) == 0) {
-			//print_time();
-		//}
 	}
 
 	JLFA(Rc_int, transitions);
