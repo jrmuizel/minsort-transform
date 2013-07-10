@@ -43,7 +43,7 @@ void read_text(FILE *tfile, unsigned char **T, int *n)
 
 void dump_array(int32_t *A, int len, const char *fname)
 {
-	FILE *outfile = fopen(fname, "w");
+	FILE *outfile = fopen(fname, "wb");
 	fwrite(A, sizeof(int32_t), len, outfile);
 	fclose(outfile);
 }
@@ -173,7 +173,7 @@ int main(int argc, char **argv)
 		read_text(stdin, &T, &len);
 	}
 	else {
-		FILE *infile = fopen(infilename, "r");
+		FILE *infile = fopen(infilename, "rb");
 		read_text(infile, &T, &len);
 		fclose(infile);
 	}
@@ -206,7 +206,7 @@ int main(int argc, char **argv)
 	int32_t *transform = alloc_int32s(len);
 	compute_transform(primary_nodes, len, nodes, nodeNum, transform);
 
-	FILE *outfile = (strcmp(outfilename, "-")==0) ? stdout : fopen(outfilename, "w");
+	FILE *outfile = (strcmp(outfilename, "-")==0) ? stdout : fopen(outfilename, "wb");
 	if(output_mode == MODE_ARRAY) {
 		fwrite(transform, sizeof(int32_t), len, outfile);
 	}

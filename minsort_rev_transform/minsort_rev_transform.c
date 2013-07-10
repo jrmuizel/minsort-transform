@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 
 	FILE *outfile = stdout;
 	if(argc > 3) {
-		outfile = fopen(argv[3], "w");
+		outfile = fopen(argv[3], "wb");
 	}
 	primary_index = strtol(argv[2], NULL, 10);
 
