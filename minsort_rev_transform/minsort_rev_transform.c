@@ -196,7 +196,7 @@ void decode(unsigned char *UST, long len, FILE *outfile)
 				count--;
 			}
 
-			if((last_node_made==0 && count > 1) || (last_node_made>0 && count-last_node_count>0)) {
+			if((last_node_made==0 && count > 2) || (last_node_made>0 && count-last_node_count>0)) {
 				int next_node = num_nodes++;
 				int j;
 				for(j=last_node_count; j<count; j++) {

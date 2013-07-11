@@ -200,6 +200,14 @@ int main(int argc, char **argv)
 	free(R);
 	free(L);
 
+	int i;
+	for(i=0; i<len; i++) {
+		if(nodes[primary_nodes[i]].width < 3) {
+			//printf("Got rid of a node, %d, width = %d\n", primary_nodes[i], nodes[primary_nodes[i]].width);
+			primary_nodes[i] = nodes[primary_nodes[i]].parent;
+		}
+	}
+
 	// parents[0..nodeNum-1] -> maps each node to its parent
 	// primary_nodes[0..len-1] -> maps each suffix (by position) to the deepest (non-leaf) node that includes it
 
